@@ -5,6 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 import time
+import os
 
 def Edit(weather):
     weather = weather.split(' ')
@@ -21,17 +22,17 @@ def extract_row(values):
     result.pop(0)
     return result
 
-def request_WEB(browser, date = 0):
+def request_WEB(browser, Stations):
     '''browser là cái driver 
        date mặc định là 0: hôm nay 1: hôm qua 2: hôm kia 
     '''
-    Stations = ['Cao Bằng: Trạm khí TTQT phường Sông Hiến (KK)','Phú Thọ: đường Hùng Vương - Tp Việt Trì (KK)','Thái nguyên: Đường Hùng Vương - Tp Thái Nguyên (KK)','Hà Nội: 556 Nguyễn Văn Cừ (KK)','Bắc Ninh: gần KCN Quế Võ - Tp Bắc Ninh (KK)','Hưng Yên: Sở TNMT - 437 Nguyễn Văn Linh, Tp Hưng Yên (KK)','Quảng Ninh: Phường Cẩm Thịnh - Cẩm Phả (KK)']
+    #Stations = ['Cao Bằng: Trạm khí TTQT phường Sông Hiến (KK)','Phú Thọ: đường Hùng Vương - Tp Việt Trì (KK)','Thái nguyên: Đường Hùng Vương - Tp Thái Nguyên (KK)','Hà Nội: 556 Nguyễn Văn Cừ (KK)','Bắc Ninh: gần KCN Quế Võ - Tp Bắc Ninh (KK)','Hưng Yên: Sở TNMT - 437 Nguyễn Văn Linh, Tp Hưng Yên (KK)','Quảng Ninh: Phường Cẩm Thịnh - Cẩm Phả (KK)']
     select = Select(browser.find_element_by_id('cbbStations'))
     data_per_date = []
     for stat in Stations: 
         data_per_hour = []
         select.select_by_visible_text(stat)
-        time.sleep(3)
+        time.sleep(10)
         
         Province = browser.find_element_by_id('station_province').text.split(':')[-1].strip()
         data_per_hour.append(Province)
@@ -51,6 +52,38 @@ def request_WEB(browser, date = 0):
         
         
     return data_per_date
+def ba_mien(Mien):
+    the_file = 0
+    Stations = []
+    
+    if Mien == 1:
+        name = "aqi_MienBac.txt"
+        if os.path.exists('./aqi_MienBac.txt') == False:
+            the_file = open(name,'a',encoding='utf-8')
+            the_file.write("Tỉnh\tVị trí\tNhiệt độ\tĐộ ẩm\tTốc độ gió\tÁp suất\tNgày giờ\tVN_AQI\tNO2\tO3\tPM-10\tPM-2-5\tSO2" + '\n')
+        the_file = open(name,'a',encoding='utf-8')
+        Stations = ['Gia Lai: TTQT TN&MT - P.Thống Nhất - TP Pleiku (KK)','Đà Nẵng: 41 đường Lê Duẩn (KK)','Cao Bằng: Trạm khí TTQT phường Sông Hiến (KK)','Phú Thọ: đường Hùng Vương - Tp Việt Trì (KK)','Thái nguyên: Đường Hùng Vương - Tp Thái Nguyên (KK)','Hà Nội: 556 Nguyễn Văn Cừ (KK)','Bắc Ninh: gần KCN Quế Võ - Tp Bắc Ninh (KK)','Hưng Yên: Sở TNMT - 437 Nguyễn Văn Linh, Tp Hưng Yên (KK)','Quảng Ninh: Phường Cẩm Thịnh - Cẩm Phả (KK)']
+        
+    if Mien == 2:
+        name = "aqi_MienTrung.txt"
+        if os.path.exists('./aqi_MienTrung.txt') == False:
+            the_file = open(name,'a',encoding='utf-8')
+            the_file.write("Tỉnh\tVị trí\tNhiệt độ\tĐộ ẩm\tTốc độ gió\tÁp suất\tNgày giờ\tVN_AQI\tPM-10\tPM-2-5" + '\n')
+        the_file = open(name,'a',encoding='utf-8')
+        Stations = ['Nghệ An: Trường Thi, Thành phố Vinh - KTTV (KK)']
+    
+    if Mien == 3:
+        name = "aqi_MienNam.txt"
+        if os.path.exists('./aqi_MienNam.txt') == False:
+            the_file = open(name,'a',encoding='utf-8')
+            the_file.write("Tỉnh\tVị trí\tNhiệt độ\tĐộ ẩm\tTốc độ gió\tÁp suất\tNgày giờ\tVN_AQI\tPM-10\tPM-2-5" + '\n')
+        the_file = open(name,'a',encoding='utf-8')
+        Stations = ['Tp Hồ Chí Minh: Đường Nguyễn Văn Tạo, Ấp 3, Nhà Bè - KTTV (KK)','Cần Thơ: Ninh Kiều - KTTV (KK)']
+    
+    data_all_station = request_WEB(browser,Stations)
+    for data in data_all_station:
+        the_file.write('\t'.join(str(v) for v in data) + '\n')
+    the_file.close()
 
 #Vào trang
 URL = 'http://enviinfo.cem.gov.vn/'
@@ -62,16 +95,8 @@ browser.find_element_by_xpath('/html/body/div[2]/div[1]/div/div[3]/div[1]/div[1]
 container = browser.find_element_by_id("cbbStations")
 browser.execute_script("arguments[0].style.display = 'block';", container)
 
-name = "aqi_data.txt"
+ba_mien(1)
+ba_mien(2)
+ba_mien(3)
 
-import os
-if os.path.exists('./aqi_data.txt') == False:
-    the_file = open(name,'a',encoding='utf-8')
-    the_file.write("Tỉnh\tVị trí\tNhiệt độ\tĐộ ẩm\tTốc độ gió\tÁp suất\tNgày giờ\tVN_AQI\tNO2\tO3\tPM-10\tPM-2-5\tSO2" + '\n')
-
-the_file = open(name,'a',encoding='utf-8')
-data_all_station = request_WEB(browser)
-for data in data_all_station:
-    the_file.write('\t'.join(str(v) for v in data) + '\n')
 browser.close()
-the_file.close()
