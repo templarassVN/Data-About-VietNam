@@ -1,5 +1,5 @@
 # Data About VietNam
- Thu thập dữ liệu chất lượng không khí Việt Nam qua 12 tỉnh thành: Gia Lai', 'Ðà Nẵng', 'Cao Bằng', 'Phú Thọ', 'Thái Nguyên', 'Hà Nội', 'Bắc Ninh', 'Hưng Yên', 'Quảng Ninh', 'Tp. Hồ Chí Minh', 'Cần Thơ', 'Nghệ An'
+ Thu thập dữ liệu chất lượng không khí Việt Nam qua 12 tỉnh thành: Gia Lai', 'Ðà Nẵng', 'Cao Bằng', 'Phú Thọ', 'Thái Nguyên', 'Hà Nội', 'Bắc Ninh', 'Quảng Ninh', 'Tp. Hồ Chí Minh', 'Cần Thơ', 'Nghệ An'
 # Nguồn: http://enviinfo.cem.gov.vn/
 Mục tiêu: thu thập dữ liệu từng giờ, bao gồm:
  * Tỉnh: Tên tỉnh
