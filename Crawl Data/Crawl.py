@@ -31,25 +31,27 @@ def request_WEB(browser, Stations):
     data_per_date = []
     for stat in Stations: 
         data_per_hour = []
-        select.select_by_visible_text(stat)
-        time.sleep(10)
+        try:
+            select.select_by_visible_text(stat)
+            time.sleep(10)
+            
+            Province = browser.find_element_by_id('station_province').text.split(':')[-1].strip()
+            data_per_hour.append(Province)
+            longlat = browser.find_element_by_id('longlat').text.split(' ')
+            data_per_hour.append((longlat[2],longlat[6]))
+            weather = browser.find_element_by_class_name('weather').text
+            data_per_hour.extend(Edit(weather))
+            
+            soup=BeautifulSoup(browser.page_source,'html.parser')
+            table= soup.find('table',{'id': 'custom_datatable_1'})
+            body = table.find('tbody')
+            lastest_hour = body.find('tr')
+            values = lastest_hour.find_all('td')
+            data_per_hour.extend(extract_row(values))
         
-        Province = browser.find_element_by_id('station_province').text.split(':')[-1].strip()
-        data_per_hour.append(Province)
-        longlat = browser.find_element_by_id('longlat').text.split(' ')
-        data_per_hour.append((longlat[2],longlat[6]))
-        weather = browser.find_element_by_class_name('weather').text
-        data_per_hour.extend(Edit(weather))
-        
-        soup=BeautifulSoup(browser.page_source,'html.parser')
-        table= soup.find('table',{'id': 'custom_datatable_1'})
-        body = table.find('tbody')
-        lastest_hour = body.find('tr')
-        values = lastest_hour.find_all('td')
-        data_per_hour.extend(extract_row(values))
-        
-        data_per_date.append(data_per_hour)
-        
+            data_per_date.append(data_per_hour)
+        except:
+            data_per_date.append(data_per_hour)
         
     return data_per_date
 def ba_mien(Mien):
@@ -61,8 +63,9 @@ def ba_mien(Mien):
         if os.path.exists('./aqi_MienBac.txt') == False:
             the_file = open(name,'a',encoding='utf-8')
             the_file.write("Tỉnh\tVị trí\tNhiệt độ\tĐộ ẩm\tTốc độ gió\tÁp suất\tNgày giờ\tVN_AQI\tNO2\tO3\tPM-10\tPM-2-5\tSO2" + '\n')
-        the_file = open(name,'a',encoding='utf-8')
-        Stations = ['Gia Lai: TTQT TN&MT - P.Thống Nhất - TP Pleiku (KK)','Đà Nẵng: 41 đường Lê Duẩn (KK)','Cao Bằng: Trạm khí TTQT phường Sông Hiến (KK)','Phú Thọ: đường Hùng Vương - Tp Việt Trì (KK)','Thái nguyên: Đường Hùng Vương - Tp Thái Nguyên (KK)','Hà Nội: 556 Nguyễn Văn Cừ (KK)','Bắc Ninh: gần KCN Quế Võ - Tp Bắc Ninh (KK)','Hưng Yên: Sở TNMT - 437 Nguyễn Văn Linh, Tp Hưng Yên (KK)','Quảng Ninh: Phường Cẩm Thịnh - Cẩm Phả (KK)']
+        the_file = open(name,'a',encoding='utf-8') 
+	#'Thái nguyên: Đường Hùng Vương - Tp Thái Nguyên (KK)'
+        Stations = ['Gia Lai: TTQT TN&MT - P.Thống Nhất - TP Pleiku (KK)','Đà Nẵng: 41 đường Lê Duẩn (KK)','Cao Bằng: Trạm khí TTQT phường Sông Hiến (KK)','Phú Thọ: đường Hùng Vương - Tp Việt Trì (KK)','Hà Nội: 556 Nguyễn Văn Cừ (KK)','Bắc Ninh: gần KCN Quế Võ - Tp Bắc Ninh (KK)','Thái nguyên: Đường Hùng Vương - Tp Thái Nguyên (KK)','Quảng Ninh: Phường Cẩm Thịnh - Cẩm Phả (KK)']
         
     if Mien == 2:
         name = "aqi_MienTrung.txt"
