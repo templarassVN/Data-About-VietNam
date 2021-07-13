@@ -1,0 +1,2 @@
+hcm model = SARIMAX(train, order=(0, 0, 0), seasonal_order=(1, 0, 2, 24), trend='n', enforce_stationarity=False, enforce_invertibility=False)
+gia lai SARIMAX(train, order=(0, 1, 0), seasonal_order=(1, 1, 1, 24), trend='n', enforce_stationarity=True, enforce_invertibility=True)
